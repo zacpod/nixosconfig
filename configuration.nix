@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs,  ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports =
@@ -150,7 +150,7 @@ services.pipewire = {
 xdg.portal = {
   enable = true;
   config.common.default = [ "hyprland" ];
-  # do not set extraPortals here; leave it empty or omit it
+  extraPortals = lib.mkForce [ pkgs.xdg-desktop-portal-hyprland ];
 };
 environment.etc."xdg-desktop-portal/portals.conf".text = ''
 [preferred]
