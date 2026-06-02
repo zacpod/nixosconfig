@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, lib, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
@@ -63,7 +63,7 @@ services.greetd = {
   enable = true;
   settings = {
     default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
+      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'  --theme 'border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red'";
       user = "greeter";
     };
   };
@@ -87,7 +87,8 @@ services.dbus = {
   security.pam.services.hyprland.enableKwallet = true;
   security.pam.services.greetd.enableKwallet = true;
   systemd.user.services.kwalletd5.enable = false;
-  # persistently disable the GTK portal activation
+  systemd.services."rtkit-daemon".enable = true;  
+# persistently disable the GTK portal activation
   systemd.user.services."xdg-desktop-portal-gtk.service".enable = false;
 
   systemd.user.services."xdg-desktop-portal-kwallet.service".enable = false;
@@ -150,12 +151,9 @@ services.pipewire = {
 xdg.portal = {
   enable = true;
   config.common.default = [ "hyprland" ];
-  extraPortals = lib.mkForce [ pkgs.xdg-desktop-portal-hyprland ];
+  # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
 };
-environment.etc."xdg-desktop-portal/portals.conf".text = ''
-[preferred]
-default=hyprland
-'';
+
 
 
 #xdg.portal = {
@@ -199,7 +197,7 @@ default=hyprland
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
   # Enable GVfs (Virtual File System) to allow userspace mounting
   services.gvfs.enable = true;
-
+  security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
   boot.kernel.sysctl = {
     "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
     "fs.file-max" = 524288;

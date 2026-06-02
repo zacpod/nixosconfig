@@ -9,6 +9,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-citizen.url = "github:LovingMelody/nix-citizen";
 
     # Patched Hyprland + patched XDPH
@@ -25,6 +30,7 @@
         ./hardware-configuration.nix
         ./configuration.nix
         nix-citizen.nixosModules.default
+        ./noctalia.nix
 
 ({ pkgs, ... }: {
   nixpkgs.overlays = [
@@ -62,3 +68,4 @@
     };
   };
 }
+
