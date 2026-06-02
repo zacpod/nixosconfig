@@ -72,7 +72,7 @@
 		# 2. Clipboard History Manager
 		cliphist # Clipboard history manager
 		wl-clipboard # Core Wayland clipboard copy/paste tool
-		pantheon.pantheon-agent-polkit
+#		pantheon.pantheon-agent-polkit
 		haruna
 		pavucontrol # Simple, clean UI to route individual app streams
 		qjackctl # Optional: Advanced patchbay for manual line routing
