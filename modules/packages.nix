@@ -109,6 +109,10 @@
 		xdg-desktop-portal
 		xdg-desktop-portal-gtk
 		jq #json query utility
-		];
-
+		kdePackages.dolphin
+		kdePackages.kio
+		kdePackages.kio-fuse
+		kdePackages.kio-extras
+		kdePackages.qtsvg
+	];
 }
