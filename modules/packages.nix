@@ -15,7 +15,9 @@
 			remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
 			dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 			localNetworkGameTransfers.openFirewall = true; # Open ports for local network game transfers
-			};
+#			package = pkgs.steam.override { extraArgs = "-system-composer"; };
+			gamescopeSession.enable = true;
+		};
 		gamemode.enable = true;
 		rsi-launcher = {
 			enable = true;
@@ -114,5 +116,6 @@
 		kdePackages.kio-fuse
 		kdePackages.kio-extras
 		kdePackages.qtsvg
+		fastfetch
 	];
 }

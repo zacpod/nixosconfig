@@ -16,14 +16,14 @@
 
     nix-citizen.url = "github:LovingMelody/nix-citizen";
 
- #   dolphin-overlay.url = "github:rumboon/dolphin-overlay";
 
     # Patched Hyprland + patched XDPH
     hyprland-patched.url = "github:3l0w/Hyprland/feat/input-capture-impl";
     xdph-patched.url = "github:3l0w/xdg-desktop-portal-hyprland/feat/input-capture-impl";
-  };
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+    };
 
-  outputs = { self, nixpkgs, zen-browser, nix-citizen, hyprland-patched, xdph-patched, dolphin-overlay, ... } @ inputs: {
+  outputs = { self, nixpkgs, zen-browser, nix-citizen, hyprland-patched, xdph-patched, nix-cachyos-kernel, ... } @ inputs: {
     nixosConfigurations.Goliath = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -32,7 +32,6 @@
         ./hardware-configuration.nix
         ./configuration.nix
         nix-citizen.nixosModules.default
-#        dolphin-overlay.overlays.default
         ./noctalia.nix
       ({ pkgs, ... }: {
         nixpkgs.overlays = [

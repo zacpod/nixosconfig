@@ -44,11 +44,19 @@
   };
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
+
+  hardware.opengl.enable = true;
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+    extraPackages = with pkgs; [
+      mesa.drivers # Forces clean, native 64-bit RADV paths
+    ];
+    extraPackages32 = with pkgs.pkgsi686Linux; [
+      mesa.drivers # Forces clean, native 32-bit RADV paths
+    ];
   };
-  hardware.opengl.enable = true;
+
 
   # Enable the SDDM display manager with native Wayland support
   #services.displayManager.sddm = {
@@ -120,6 +128,7 @@ services.pipewire = {
   boot.kernel.sysctl = {
     "kernel.yama.ptrace_scope" = 0;
   };
+  boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."zac" = {
@@ -137,12 +146,16 @@ services.pipewire = {
     # Speed configurations for heavy source compilation
     max-jobs = "auto";  # Allows Nix to run multiple builds at the same time
     cores = 0;          # Tells Nix to use EVERY available CPU core for each build
-
+    trusted-users = [ "root" "zac" ];
     # Our previous binary cache addition
     substituters = [ "https://cache.nixos.org"
 		     "https://hyprland.cachix.org"
-                     "https://cachix.org" ];
-    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+                     "https://cachix.org"
+                     "https://nix-cachyos-kernel.cachix.org"
+                     ];
+    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+                            "nix-cachyos-kernel.cachix.org-1:b37NcwW84Oi9Yp0iigQX9ZfSscZ997R6p9SgAs9of7M="
+    ];
   };
 
 
@@ -185,6 +198,7 @@ xdg.portal = {
 
     # Tells system portals and web-engines to prefer native dark layouts
     GTK_USE_PORTAL = "1";
+    AMD_VULKAN_ICD = "RADV";
   };
 
   # Natively expose standard schemas and portal paths across all system users
