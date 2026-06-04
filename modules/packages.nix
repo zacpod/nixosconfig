@@ -117,5 +117,8 @@
 		kdePackages.kio-extras
 		kdePackages.qtsvg
 		fastfetch
+		libva
+		mesa.drivers
+		qt6Packages.qt6ct
 	];
 }

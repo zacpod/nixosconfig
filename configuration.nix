@@ -47,15 +47,17 @@
 
   hardware.opengl.enable = true;
   hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      mesa.drivers # Forces clean, native 64-bit RADV paths
-    ];
-    extraPackages32 = with pkgs.pkgsi686Linux; [
-      mesa.drivers # Forces clean, native 32-bit RADV paths
-    ];
-  };
+	  extraPackages = with pkgs; [
+	    libva                 # Video Acceleration API
+	    mesa.drivers          # Mesa drivers
+	  ];
+	  extraPackages32 = with pkgs.pkgsi686Linux; [
+	    libva
+	    mesa.drivers
+	  ];
+	    enable = true;
+	    enable32Bit = true;
+	  };
 
 
   # Enable the SDDM display manager with native Wayland support
@@ -191,18 +193,25 @@ xdg.portal = {
     # Match this exactly to the folder name provided by the package
     XCURSOR_THEME = "Bibata-Modern-Classic";
     XCURSOR_SIZE = "24";
-    QT_QPA_PLATFORMTHEME = "kde";
-
+    #QT_QPA_PLATFORMTHEME = "kde";
+    QT_QPA_PLATFORMTHEME = "qt6ct";
     # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
     GTK_THEME = "Adwaita-dark";
 
     # Tells system portals and web-engines to prefer native dark layouts
     GTK_USE_PORTAL = "1";
     AMD_VULKAN_ICD = "RADV";
-  };
 
-  # Natively expose standard schemas and portal paths across all system users
-  environment.pathsToLink = [ 
+	  # Forces Steam to use the absolute native Mesa RADV loader directly
+	  VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+	  
+	  # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
+	  # that frequently cause context losses during a game's initial rendering hook
+	  DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
+	  };
+
+	  # Natively expose standard schemas and portal paths across all system users
+	  environment.pathsToLink = [ 
     "/share/gsettings-desktop-schemas"
     "/share/xdg-desktop-portal"
   ];
