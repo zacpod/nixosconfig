@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs,  ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
@@ -44,11 +44,21 @@
   };
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
+
   hardware.opengl.enable = true;
+  hardware.graphics = {
+	  extraPackages = with pkgs; [
+	    libva                 # Video Acceleration API
+	    mesa.drivers          # Mesa drivers
+	  ];
+	  extraPackages32 = with pkgs.pkgsi686Linux; [
+	    libva
+	    mesa.drivers
+	  ];
+	    enable = true;
+	    enable32Bit = true;
+	  };
+
 
   # Enable the SDDM display manager with native Wayland support
   #services.displayManager.sddm = {
@@ -58,16 +68,6 @@
   #  theme = "breeze";
   #  package = pkgs.kdePackages.sddm;
   #};
-
-#services.greetd = {
-#  enable = true;
-#  settings = {
-#    default_session = {
-#      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
-#      user = "greeter";
-#    };
-#  };
-#};
 
 services.displayManager.plasma-manager.enable = true;
 services.desktopManager.plasma6.enable = true;
@@ -101,7 +101,8 @@ services.dbus = {
   security.pam.services.hyprland.enableKwallet = true;
   security.pam.services.greetd.enableKwallet = true;
   systemd.user.services.kwalletd5.enable = false;
-  # persistently disable the GTK portal activation
+  systemd.services."rtkit-daemon".enable = true;  
+# persistently disable the GTK portal activation
   systemd.user.services."xdg-desktop-portal-gtk.service".enable = false;
 
   systemd.user.services."xdg-desktop-portal-kwallet.service".enable = false;
@@ -133,6 +134,7 @@ services.pipewire = {
   boot.kernel.sysctl = {
     "kernel.yama.ptrace_scope" = 0;
   };
+  boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."zac" = {
@@ -150,12 +152,16 @@ services.pipewire = {
     # Speed configurations for heavy source compilation
     max-jobs = "auto";  # Allows Nix to run multiple builds at the same time
     cores = 0;          # Tells Nix to use EVERY available CPU core for each build
-
+    trusted-users = [ "root" "zac" ];
     # Our previous binary cache addition
     substituters = [ "https://cache.nixos.org"
 		     "https://hyprland.cachix.org"
-                     "https://cachix.org" ];
-    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+                     "https://cachix.org"
+                     "https://nix-cachyos-kernel.cachix.org"
+                     ];
+    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+                            "nix-cachyos-kernel.cachix.org-1:b37NcwW84Oi9Yp0iigQX9ZfSscZ997R6p9SgAs9of7M="
+    ];
   };
 
 
@@ -170,11 +176,6 @@ xdg.portal = {
   ];
 };
 
-qt = {
-    enable = true;
-    platformTheme = "kde";
-    style = "breeze";
-  };
 
 #environment.etc."xdg-desktop-portal/portals.conf".text = ''
 #[preferred]
@@ -204,17 +205,25 @@ qt = {
     # Match this exactly to the folder name provided by the package
     XCURSOR_THEME = "Bibata-Modern-Classic";
     XCURSOR_SIZE = "24";
-    QT_QPA_PLATFORMTHEME = "kde";
-
+    #QT_QPA_PLATFORMTHEME = "kde";
+    QT_QPA_PLATFORMTHEME = "qt6ct";
     # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
     GTK_THEME = "Adwaita-dark";
 
     # Tells system portals and web-engines to prefer native dark layouts
     GTK_USE_PORTAL = "1";
-  };
+    AMD_VULKAN_ICD = "RADV";
 
-  # Natively expose standard schemas and portal paths across all system users
-  environment.pathsToLink = [ 
+	  # Forces Steam to use the absolute native Mesa RADV loader directly
+	  VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+	  
+	  # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
+	  # that frequently cause context losses during a game's initial rendering hook
+	  DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
+	  };
+
+	  # Natively expose standard schemas and portal paths across all system users
+	  environment.pathsToLink = [ 
     "/share/gsettings-desktop-schemas"
     "/share/xdg-desktop-portal"
   ];
@@ -223,7 +232,7 @@ qt = {
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
   # Enable GVfs (Virtual File System) to allow userspace mounting
   services.gvfs.enable = true;
-
+  security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
   boot.kernel.sysctl = {
     "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
     "fs.file-max" = 524288;

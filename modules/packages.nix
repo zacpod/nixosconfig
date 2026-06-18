@@ -15,7 +15,9 @@
 			remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
 			dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 			localNetworkGameTransfers.openFirewall = true; # Open ports for local network game transfers
-			};
+#			package = pkgs.steam.override { extraArgs = "-system-composer"; };
+			gamescopeSession.enable = true;
+		};
 		gamemode.enable = true;
 		rsi-launcher = {
 			enable = true;
@@ -38,7 +40,7 @@
 		nano
 		kitty
 		rofi
-		waybar
+		rtkit
 		wireplumber # Audio control
 		libgtop # System resource tracking
 		bluez # Bluetooth tracking
@@ -106,6 +108,17 @@
 		kdePackages.kwalletmanager
 		gnupg
 		pinentry-qt
-		];
-
+		xdg-desktop-portal
+		xdg-desktop-portal-gtk
+		jq #json query utility
+		kdePackages.dolphin
+		kdePackages.kio
+		kdePackages.kio-fuse
+		kdePackages.kio-extras
+		kdePackages.qtsvg
+		fastfetch
+		libva
+		mesa.drivers
+		qt6Packages.qt6ct
+	];
 }
