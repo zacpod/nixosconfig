@@ -59,15 +59,29 @@
   #  package = pkgs.kdePackages.sddm;
   #};
 
-services.greetd = {
-  enable = true;
-  settings = {
-    default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
-      user = "greeter";
-    };
+#services.greetd = {
+#  enable = true;
+#  settings = {
+#    default_session = {
+#      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'";
+#      user = "greeter";
+#    };
+#  };
+#};
+
+services.displayManager.plasma-manager.enable = true;
+services.desktopManager.plasma6.enable = true;
+environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
   };
-};
+
+qt = {
+    enable = true;
+    platformTheme = "kde";
+    style = "breeze";
+  };
+
 
 services.dbus = {
   enable = true;
@@ -150,12 +164,22 @@ services.pipewire = {
 xdg.portal = {
   enable = true;
   config.common.default = [ "hyprland" ];
-  # do not set extraPortals here; leave it empty or omit it
+  extraPortals = [
+      pkgs.xdg-desktop-portal-kde
+      pkgs.xdg-desktop-portal-hyprland
+  ];
 };
-environment.etc."xdg-desktop-portal/portals.conf".text = ''
-[preferred]
-default=hyprland
-'';
+
+qt = {
+    enable = true;
+    platformTheme = "kde";
+    style = "breeze";
+  };
+
+#environment.etc."xdg-desktop-portal/portals.conf".text = ''
+#[preferred]
+#default=hyprland
+#'';
 
 
 #xdg.portal = {
