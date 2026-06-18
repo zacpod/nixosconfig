@@ -60,15 +60,7 @@
 	  };
 
 
-  # Enable the SDDM display manager with native Wayland support
-  #services.displayManager.sddm = {
-  #  enable = true;
-  #  wayland.enable = true; # Ensures the login screen itself runs on a crisp Wayland backend
-  #  enableHidpi = true;
-  #  theme = "breeze";
-  #  package = pkgs.kdePackages.sddm;
-  #};
-
+services.greetd.enable = false;
 services.displayManager.plasma-manager.enable = true;
 services.desktopManager.plasma6.enable = true;
 environment.sessionVariables = {
@@ -166,34 +158,15 @@ services.pipewire = {
 
 
 
-# xdg.portal: prefer hyprland, avoid extraPortals merging
 xdg.portal = {
   enable = true;
-  config.common.default = [ "hyprland" ];
+#  config.common.default = [ "hyprland" ];
   extraPortals = [
       pkgs.xdg-desktop-portal-kde
       pkgs.xdg-desktop-portal-hyprland
   ];
 };
 
-
-#environment.etc."xdg-desktop-portal/portals.conf".text = ''
-#[preferred]
-#default=hyprland
-#'';
-
-
-#xdg.portal = {
-#  enable = true;
-#  extraPortals = with pkgs; [
-#    xdg-desktop-portal-gtk
-#  ];
-#  config = {
-#    common = {
-#      default = [ "hyprland" "gtk" ];
-#    };
-#  };
-#};
 
   # Modern NixOS Font Configuration
   fonts.packages = with pkgs; [

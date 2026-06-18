@@ -52,17 +52,17 @@
               xdph-patched.packages.${system}.xdg-desktop-portal-hyprland;
           })
 
-          # 2. (Optional) Waybar rebuild against patched libs/portal
-          (final: prev: {
-            waybar = prev.waybar.overrideAttrs (old: {
-              buildInputs = (old.buildInputs or []) ++ [
-                final.xdg-desktop-portal-hyprland
-                final.hyprutils
-                final.hyprlang
-                final.hyprgraphics
-              ];
-            });
-          })
+#          # 2. (Optional) Waybar rebuild against patched libs/portal
+#          (final: prev: {
+#            waybar = prev.waybar.overrideAttrs (old: {
+#              buildInputs = (old.buildInputs or []) ++ [
+#                final.xdg-desktop-portal-hyprland
+#                final.hyprutils
+#                final.hyprlang
+#                final.hyprgraphics
+#              ];
+#            });
+#          })
         ];
       })
       ];
