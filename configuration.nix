@@ -51,15 +51,15 @@
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
 
-  hardware.opengl.enable = true;
+  #hardware.opengl.enable = true;
   hardware.graphics = {
 	  extraPackages = with pkgs; [
 	    libva                 # Video Acceleration API
-	    mesa.drivers          # Mesa drivers
+	    mesa	          # Mesa drivers
 	  ];
 	  extraPackages32 = with pkgs.pkgsi686Linux; [
 	    libva
-	    mesa.drivers
+	    mesa
 	  ];
 	    enable = true;
 	    enable32Bit = true;
