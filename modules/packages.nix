@@ -31,6 +31,29 @@
 			enable = true;
 			enableSSHSupport = true;
 		};
+		obs-studio = {
+			enable = true;
+			plugins = with pkgs.obs-studio-plugins; [
+				wlrobs
+				obs-vkcapture
+			];
+		};
+		fish = {
+  			enable = true;
+		  	interactiveShellInit = ''
+				set -g fish_greeting ""
+  				'';
+#  			plugins = [
+#				{
+#				name = "fzf-fish";
+#				src = pkgs.fishPlugins.fzf-fish.src;
+#				}
+#				{
+#				name = "done";
+#				src = pkgs.fishPlugins.done.src;
+#				}
+#			];
+		};
 	};
 
 
@@ -94,9 +117,11 @@
 		microsoft-edge          # Microsoft Edge browser (Stable)
 		libreoffice-fresh       # The modern, fully maintained successor to OpenOffice
 		obs-studio              # OBS Studio for streaming and recording
+		obs-studio-plugins.obs-vkcapture
 		brightnessctl         # Media key hardware control
 		solaar			# Logitech perpheral management panel
-		snixembed		# Let WINE systray items appear in the Wayland systray
+#		xembedsniproxy		# Let WINE systray items appear in the Wayland systray
+#		snixembed
 		inputs.zen-browser.packages."${stdenv.hostPlatform.system}".default
   		libdbusmenu-gtk3   # Allows Electron/GTK apps to send system tray menu trees
 		adwaita-icon-theme
@@ -120,5 +145,8 @@
 		libva
 		mesa.drivers
 		qt6Packages.qt6ct
+		libnotify
+		dnsutils
+		nixpkgs-fmt
 	];
 }

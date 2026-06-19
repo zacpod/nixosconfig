@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs,  ... }:
 
 {
   imports =
@@ -29,6 +29,12 @@
     layout = "us";
     variant = "";
   };
+
+  #Fix for networking not being available in the rebuild sandbox.
+  nix.settings.extra-sandbox-paths =  [
+    "/etc/resolv.conf"
+  ];
+
 
 
   # 1. Enable Hardware Bluetooth Support
@@ -69,15 +75,18 @@
   #  package = pkgs.kdePackages.sddm;
   #};
 
-services.greetd = {
-  enable = true;
-  settings = {
-    default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'  --theme 'border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red'";
-      user = "greeter";
-    };
-  };
-};
+#services.greetd = {
+#  enable = true;
+#  settings = {
+#    default_session = {
+#      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'  --theme 'border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red'";
+#      user = "greeter";
+#    };
+#  };
+#};
+
+services.displayManager.plasma-login-manager.enable = true;
+
 
 services.dbus = {
   enable = true;
@@ -95,7 +104,8 @@ services.dbus = {
 #  security.pam.services.sddm.enable = true;
 #  security.hideProcessInformation = false;
   security.pam.services.hyprland.enableKwallet = true;
-  security.pam.services.greetd.enableKwallet = true;
+#  security.pam.services.greetd.enableKwallet = true;
+  security.pam.services.plasma-login-manager.enableKwallet = true;
   systemd.user.services.kwalletd5.enable = false;
   systemd.services."rtkit-daemon".enable = true;  
 # persistently disable the GTK portal activation
@@ -138,6 +148,7 @@ services.pipewire = {
     description = "Zac Crawforth";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
+    shell = pkgs.fish;
   };
 
   # Allow unfree packages
@@ -152,12 +163,18 @@ services.pipewire = {
     # Our previous binary cache addition
     substituters = [ "https://cache.nixos.org"
 		     "https://hyprland.cachix.org"
-                     "https://cachix.org"
-                     "https://nix-cachyos-kernel.cachix.org"
+                     "https://cachyos-kernel.cachix.org"
                      ];
-    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-                            "nix-cachyos-kernel.cachix.org-1:b37NcwW84Oi9Yp0iigQX9ZfSscZ997R6p9SgAs9of7M="
-    ];
+    trusted-public-keys = [
+		"cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+		"hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+		"cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
+		];
+
+
+#    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+#			    "cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
+#    ];
   };
 
 
@@ -167,6 +184,12 @@ xdg.portal = {
   enable = true;
   config.common.default = [ "hyprland" ];
   # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
+  config.hyprland = {
+      default = [ "hyprland" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
+      "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
+  };
+
 };
 
 
@@ -218,6 +241,8 @@ xdg.portal = {
 
   # Ensure environment variables for desktop applications are set
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
+  services.desktopManager.plasma6.enable = true;
+
   # Enable GVfs (Virtual File System) to allow userspace mounting
   services.gvfs.enable = true;
   security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
