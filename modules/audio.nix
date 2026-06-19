@@ -2,25 +2,25 @@
 
 let
   wp_store_json = ''
-  {
-    "modules": [
-      {
-        "name": "store-factory",
-        "type": "factory",
-        "args": {
-          "path": "~/.local/share/wireplumber/state",
-          "save_interval": 5
+    {
+      "modules": [
+        {
+          "name": "store-factory",
+          "type": "factory",
+          "args": {
+            "path": "~/.local/share/wireplumber/state",
+            "save_interval": 5
+          }
+        },
+        {
+          "name": "session-factory",
+          "type": "factory",
+          "args": {
+            "restore": true
+          }
         }
-      },
-      {
-        "name": "session-factory",
-        "type": "factory",
-        "args": {
-          "restore": true
-        }
-      }
-    ]
-  }
+      ]
+    }
   '';
 in
 {
@@ -33,6 +33,6 @@ in
     wireplumber.enable = true;
   };
 
-  environment.etc."wireplumber/wireplumber.conf.d/50-store.conf".text =  wp_store_json;
+  environment.etc."wireplumber/wireplumber.conf.d/50-store.conf".text = wp_store_json;
 
 }

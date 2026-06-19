@@ -2,11 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs,  ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./modules/networking.nix
       ./modules/packages.nix
@@ -31,7 +32,7 @@
   };
 
   #Fix for networking not being available in the rebuild sandbox.
-  nix.settings.extra-sandbox-paths =  [
+  nix.settings.extra-sandbox-paths = [
     "/etc/resolv.conf"
   ];
 
@@ -53,54 +54,54 @@
 
   #hardware.opengl.enable = true;
   hardware.graphics = {
-	  extraPackages = with pkgs; [
-	    libva                 # Video Acceleration API
-	    mesa	          # Mesa drivers
-	  ];
-	  extraPackages32 = with pkgs.pkgsi686Linux; [
-	    libva
-	    mesa
-	  ];
-	    enable = true;
-	    enable32Bit = true;
-	  };
+    extraPackages = with pkgs; [
+      libva # Video Acceleration API
+      mesa # Mesa drivers
+    ];
+    extraPackages32 = with pkgs.pkgsi686Linux; [
+      libva
+      mesa
+    ];
+    enable = true;
+    enable32Bit = true;
+  };
 
 
-services.displayManager.plasma-manager.enable = true;
-services.desktopManager.plasma6.enable = true;
-environment.sessionVariables = {
+  services.displayManager.plasma-manager.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
   };
 
-qt = {
+  qt = {
     enable = true;
     platformTheme = "kde";
     style = "breeze";
   };
 
 
-services.dbus = {
-  enable = true;
-  packages = with pkgs; [
-    libdbusmenu-gtk3
-    libappindicator-gtk3
-  ];
-};
+  services.dbus = {
+    enable = true;
+    packages = with pkgs; [
+      libdbusmenu-gtk3
+      libappindicator-gtk3
+    ];
+  };
 
   services.upower.enable = true;
 
   # 2. Grant PAM permissions to allow hyprlock to verify your password
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
   security.polkit.enable = true;
-#  security.pam.services.sddm.enable = true;
-#  security.hideProcessInformation = false;
+  #  security.pam.services.sddm.enable = true;
+  #  security.hideProcessInformation = false;
   security.pam.services.hyprland.enableKwallet = true;
-#  security.pam.services.greetd.enableKwallet = true;
+  #  security.pam.services.greetd.enableKwallet = true;
   security.pam.services.plasma-login-manager.enableKwallet = true;
   systemd.user.services.kwalletd5.enable = false;
-  systemd.services."rtkit-daemon".enable = true;  
-# persistently disable the GTK portal activation
+  systemd.services."rtkit-daemon".enable = true;
+  # persistently disable the GTK portal activation
   systemd.user.services."xdg-desktop-portal-gtk.service".enable = false;
 
   systemd.user.services."xdg-desktop-portal-kwallet.service".enable = false;
@@ -108,25 +109,25 @@ services.dbus = {
 
 
 
-services.pipewire = {
-  enable = true;
-  alsa.enable = true;
-  alsa.support32Bit = true;
-  pulse.enable = true;
-  jack.enable = true;
-
-  wireplumber = {
+  services.pipewire = {
     enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
 
-    extraConfig = {
-      "10-restore" = {
-        "wireplumber.settings" = {
-          "restore-state" = true;
+    wireplumber = {
+      enable = true;
+
+      extraConfig = {
+        "10-restore" = {
+          "wireplumber.settings" = {
+            "restore-state" = true;
+          };
         };
       };
     };
   };
-};
 
 
   boot.kernel.sysctl = {
@@ -139,7 +140,7 @@ services.pipewire = {
     isNormalUser = true;
     description = "Zac Crawforth";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    packages = with pkgs; [ ];
     shell = pkgs.fish;
   };
 
@@ -149,122 +150,123 @@ services.pipewire = {
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     # Speed configurations for heavy source compilation
-    max-jobs = "auto";  # Allows Nix to run multiple builds at the same time
-    cores = 0;          # Tells Nix to use EVERY available CPU core for each build
+    max-jobs = "auto"; # Allows Nix to run multiple builds at the same time
+    cores = 0; # Tells Nix to use EVERY available CPU core for each build
     trusted-users = [ "root" "zac" ];
     # Our previous binary cache addition
-    substituters = [ "https://cache.nixos.org"
-		     "https://hyprland.cachix.org"
-                     "https://cachyos-kernel.cachix.org"
-                     ];
+    substituters = [
+      "https://cache.nixos.org"
+      "https://hyprland.cachix.org"
+      "https://cachyos-kernel.cachix.org"
+    ];
     trusted-public-keys = [
-		"cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-		"hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-		"cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
-		];
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
+    ];
 
 
-#    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-#			    "cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
-#    ];
+    #    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+    #			    "cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
+    #    ];
   };
 
 
 
-xdg.portal = {
-  enable = true;
-<<<<<<< HEAD
-  config.common.default = [ "hyprland" ];
-  # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
-  config.hyprland = {
+  xdg.portal = {
+    enable = true;
+    <<<<<<< HEAD
+      config.common.default = [ "hyprland" ];
+    # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
+    config.hyprland = {
       default = [ "hyprland" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
       "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
-  };
+    };
 
-=======
-#  config.common.default = [ "hyprland" ];
-  extraPortals = [
+    =======
+    #  config.common.default = [ "hyprland" ];
+    extraPortals = [
       pkgs.xdg-desktop-portal-kde
       pkgs.xdg-desktop-portal-hyprland
-  ];
->>>>>>> 8d226ec99c1dda9f263c998636a15682add19bda
-};
+    ];
+    >>>>>>> 8d226ec99c1dda9f263c998636a15682add19bda
+      };
 
 
-  # Modern NixOS Font Configuration
-  fonts.packages = with pkgs; [
-    nerd-fonts.fira-code      # High quality mono font with icons
-    nerd-fonts.symbols-only   # Highly recommended fallback for custom status bar icons
-  ];
+      # Modern NixOS Font Configuration
+      fonts.packages = with pkgs; [
+      nerd-fonts.fira-code # High quality mono font with icons
+      nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
+    ];
 
-  environment.sessionVariables = {
-    # Match this exactly to the folder name provided by the package
-    XCURSOR_THEME = "Bibata-Modern-Classic";
-    XCURSOR_SIZE = "24";
-    #QT_QPA_PLATFORMTHEME = "kde";
-    QT_QPA_PLATFORMTHEME = "qt6ct";
-    # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
-    GTK_THEME = "Adwaita-dark";
+    environment.sessionVariables = {
+      # Match this exactly to the folder name provided by the package
+      XCURSOR_THEME = "Bibata-Modern-Classic";
+      XCURSOR_SIZE = "24";
+      #QT_QPA_PLATFORMTHEME = "kde";
+      QT_QPA_PLATFORMTHEME = "qt6ct";
+      # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
+      GTK_THEME = "Adwaita-dark";
 
-    # Tells system portals and web-engines to prefer native dark layouts
-    GTK_USE_PORTAL = "1";
-    AMD_VULKAN_ICD = "RADV";
+      # Tells system portals and web-engines to prefer native dark layouts
+      GTK_USE_PORTAL = "1";
+      AMD_VULKAN_ICD = "RADV";
 
-	  # Forces Steam to use the absolute native Mesa RADV loader directly
-	  VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
-	  
-	  # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
-	  # that frequently cause context losses during a game's initial rendering hook
-	  DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
-	  };
+      # Forces Steam to use the absolute native Mesa RADV loader directly
+      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
 
-	  # Natively expose standard schemas and portal paths across all system users
-	  environment.pathsToLink = [ 
-    "/share/gsettings-desktop-schemas"
-    "/share/xdg-desktop-portal"
-  ];
+      # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
+      # that frequently cause context losses during a game's initial rendering hook
+      DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
+    };
 
-  # Ensure environment variables for desktop applications are set
-  services.xserver.desktopManager.runXdgAutostartIfNone = true;
-  services.desktopManager.plasma6.enable = true;
+    # Natively expose standard schemas and portal paths across all system users
+    environment.pathsToLink = [
+      "/share/gsettings-desktop-schemas"
+      "/share/xdg-desktop-portal"
+    ];
 
-  # Enable GVfs (Virtual File System) to allow userspace mounting
-  services.gvfs.enable = true;
-  security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
-  boot.kernel.sysctl = {
-    "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
-    "fs.file-max" = 524288;
-  };
+    # Ensure environment variables for desktop applications are set
+    services.xserver.desktopManager.runXdgAutostartIfNone = true;
+    services.desktopManager.plasma6.enable = true;
 
-
+    # Enable GVfs (Virtual File System) to allow userspace mounting
+    services.gvfs.enable = true;
+    security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
+    boot.kernel.sysctl = {
+      "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
+      "fs.file-max" = 524288;
+    };
 
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
-  # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+    # Some programs need SUID wrappers, can be configured further or are
+    # started in user sessions.
+    # programs.mtr.enable = true;
+    # programs.gnupg.agent = {
+    #   enable = true;
+    #   enableSSHSupport = true;
+    # };
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+    # List services that you want to enable:
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "26.05"; # Did you read the comment?
+    # Enable the OpenSSH daemon.
+    # services.openssh.enable = true;
 
-}
+    # Open ports in the firewall.
+    # networking.firewall.allowedTCPPorts = [ ... ];
+    # networking.firewall.allowedUDPPorts = [ ... ];
+    # Or disable the firewall altogether.
+    # networking.firewall.enable = false;
+
+    # This value determines the NixOS release from which the default
+    # settings for stateful data, like file locations and database versions
+    # on your system were taken. It‘s perfectly fine and recommended to leave
+    # this value at the release version of the first install of this system.
+    # Before changing this value read the documentation for this option
+    # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+    system.stateVersion = "26.05"; # Did you read the comment?
+
+  }
