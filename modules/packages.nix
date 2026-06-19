@@ -43,16 +43,16 @@
       interactiveShellInit = ''
         				set -g fish_greeting ""
           				'';
-      #  			plugins = [
-      #				{
-      #				name = "fzf-fish";
-      #				src = pkgs.fishPlugins.fzf-fish.src;
-      #				}
-      #				{
-      #				name = "done";
-      #				src = pkgs.fishPlugins.done.src;
-      #				}
-      #			];
+      #        			plugins = [
+      #      				{
+      #      				name = "fzf-fish";
+      #      				src = pkgs.fishPlugins.fzf-fish.src;
+      #      				}
+      #      				{
+      #      				name = "done";
+      #      				src = pkgs.fishPlugins.done.src;
+      #      				}
+      #      			];
     };
   };
 
@@ -143,7 +143,7 @@
     kdePackages.qtsvg
     fastfetch
     libva
-    mesa.drivers
+    mesa
     qt6Packages.qt6ct
     libnotify
     dnsutils
