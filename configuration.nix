@@ -67,7 +67,7 @@
   };
 
 
-  services.displayManager.plasma-manager.enable = true;
+  services.displayManager.plasma-login-manager.enable = true;
   services.desktopManager.plasma6.enable = true;
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -179,86 +179,85 @@
       default = [ "hyprland" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
       "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
-      extraPortals = [
-        pkgs.xdg-desktop-portal-kde
-        pkgs.xdg-desktop-portal-hyprland
-      ];
+#      extraPortals = [
+#        pkgs.xdg-desktop-portal-kde
+#        pkgs.xdg-desktop-portal-hyprland
+#      ];
     };
+  };
+
+  # Modern NixOS Font Configuration
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code # High quality mono font with icons
+    nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
+  ];
+
+  environment.sessionVariables = {
+    # Match this exactly to the folder name provided by the package
+    XCURSOR_THEME = "Bibata-Modern-Classic";
+    XCURSOR_SIZE = "24";
+    #QT_QPA_PLATFORMTHEME = "kde";
+    #QT_QPA_PLATFORMTHEME = "qt6ct";
+    # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
+    GTK_THEME = "Adwaita-dark";
+
+    # Tells system portals and web-engines to prefer native dark layouts
+    GTK_USE_PORTAL = "1";
+    AMD_VULKAN_ICD = "RADV";
+
+    # Forces Steam to use the absolute native Mesa RADV loader directly
+    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+
+    # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
+    # that frequently cause context losses during a game's initial rendering hook
+    DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
+  };
+
+  # Natively expose standard schemas and portal paths across all system users
+  environment.pathsToLink = [
+    "/share/gsettings-desktop-schemas"
+    "/share/xdg-desktop-portal"
+  ];
+
+  # Ensure environment variables for desktop applications are set
+  services.xserver.desktopManager.runXdgAutostartIfNone = true;
+
+  # Enable GVfs (Virtual File System) to allow userspace mounting
+  services.gvfs.enable = true;
+  security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
+  boot.kernel.sysctl = {
+    "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
+    "fs.file-max" = 524288;
+  };
 
 
-    # Modern NixOS Font Configuration
-    fonts.packages = with pkgs; [
-      nerd-fonts.fira-code # High quality mono font with icons
-      nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
-    ];
-
-    environment.sessionVariables = {
-      # Match this exactly to the folder name provided by the package
-      XCURSOR_THEME = "Bibata-Modern-Classic";
-      XCURSOR_SIZE = "24";
-      #QT_QPA_PLATFORMTHEME = "kde";
-      QT_QPA_PLATFORMTHEME = "qt6ct";
-      # Force GTK3/GTK4 apps (like Edge and OBS) into dark mode
-      GTK_THEME = "Adwaita-dark";
-
-      # Tells system portals and web-engines to prefer native dark layouts
-      GTK_USE_PORTAL = "1";
-      AMD_VULKAN_ICD = "RADV";
-
-      # Forces Steam to use the absolute native Mesa RADV loader directly
-      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
-
-      # Completely disables third-party layers (like MangoHud, OBS capture layers, or global overlays) 
-      # that frequently cause context losses during a game's initial rendering hook
-      DISABLE_VULKAN_IMPLICIT_LAYERS = "1";
-    };
-
-    # Natively expose standard schemas and portal paths across all system users
-    environment.pathsToLink = [
-      "/share/gsettings-desktop-schemas"
-      "/share/xdg-desktop-portal"
-    ];
-
-    # Ensure environment variables for desktop applications are set
-    services.xserver.desktopManager.runXdgAutostartIfNone = true;
-    services.desktopManager.plasma6.enable = true;
-
-    # Enable GVfs (Virtual File System) to allow userspace mounting
-    services.gvfs.enable = true;
-    security.rtkit.enable = true; # no idea why this was causing issues at bootup.  Why does the desktop portal need that?
-    boot.kernel.sysctl = {
-      "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
-      "fs.file-max" = 524288;
-    };
 
 
+  # Some programs need SUID wrappers, can be configured further or are
+  # started in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
 
+  # List services that you want to enable:
 
-    # Some programs need SUID wrappers, can be configured further or are
-    # started in user sessions.
-    # programs.mtr.enable = true;
-    # programs.gnupg.agent = {
-    #   enable = true;
-    #   enableSSHSupport = true;
-    # };
+  # Enable the OpenSSH daemon.
+  # services.openssh.enable = true;
 
-    # List services that you want to enable:
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
-    # Enable the OpenSSH daemon.
-    # services.openssh.enable = true;
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "26.05"; # Did you read the comment?
 
-    # Open ports in the firewall.
-    # networking.firewall.allowedTCPPorts = [ ... ];
-    # networking.firewall.allowedUDPPorts = [ ... ];
-    # Or disable the firewall altogether.
-    # networking.firewall.enable = false;
-
-    # This value determines the NixOS release from which the default
-    # settings for stateful data, like file locations and database versions
-    # on your system were taken. It‘s perfectly fine and recommended to leave
-    # this value at the release version of the first install of this system.
-    # Before changing this value read the documentation for this option
-    # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-    system.stateVersion = "26.05"; # Did you read the comment?
-
-  }
+}
