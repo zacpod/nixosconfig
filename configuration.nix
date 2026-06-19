@@ -175,27 +175,19 @@
 
   xdg.portal = {
     enable = true;
-    <<<<<<< HEAD
-      config.common.default = [ "hyprland" ];
-    # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
     config.hyprland = {
       default = [ "hyprland" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
       "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
+      extraPortals = [
+        pkgs.xdg-desktop-portal-kde
+        pkgs.xdg-desktop-portal-hyprland
+      ];
     };
 
-    =======
-    #  config.common.default = [ "hyprland" ];
-    extraPortals = [
-      pkgs.xdg-desktop-portal-kde
-      pkgs.xdg-desktop-portal-hyprland
-    ];
-    >>>>>>> 8d226ec99c1dda9f263c998636a15682add19bda
-      };
 
-
-      # Modern NixOS Font Configuration
-      fonts.packages = with pkgs; [
+    # Modern NixOS Font Configuration
+    fonts.packages = with pkgs; [
       nerd-fonts.fira-code # High quality mono font with icons
       nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
     ];
