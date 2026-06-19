@@ -66,26 +66,18 @@
 	  };
 
 
-  # Enable the SDDM display manager with native Wayland support
-  #services.displayManager.sddm = {
-  #  enable = true;
-  #  wayland.enable = true; # Ensures the login screen itself runs on a crisp Wayland backend
-  #  enableHidpi = true;
-  #  theme = "breeze";
-  #  package = pkgs.kdePackages.sddm;
-  #};
+services.displayManager.plasma-manager.enable = true;
+services.desktopManager.plasma6.enable = true;
+environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+  };
 
-#services.greetd = {
-#  enable = true;
-#  settings = {
-#    default_session = {
-#      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd 'uwsm start hyprland-uwsm.desktop'  --theme 'border=magenta;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red'";
-#      user = "greeter";
-#    };
-#  };
-#};
-
-services.displayManager.plasma-login-manager.enable = true;
+qt = {
+    enable = true;
+    platformTheme = "kde";
+    style = "breeze";
+  };
 
 
 services.dbus = {
@@ -179,9 +171,9 @@ services.pipewire = {
 
 
 
-# xdg.portal: prefer hyprland, avoid extraPortals merging
 xdg.portal = {
   enable = true;
+<<<<<<< HEAD
   config.common.default = [ "hyprland" ];
   # extraPortals =  [ pkgs.xdg-desktop-portal-hyprland ];
   config.hyprland = {
@@ -190,21 +182,15 @@ xdg.portal = {
       "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
   };
 
+=======
+#  config.common.default = [ "hyprland" ];
+  extraPortals = [
+      pkgs.xdg-desktop-portal-kde
+      pkgs.xdg-desktop-portal-hyprland
+  ];
+>>>>>>> 8d226ec99c1dda9f263c998636a15682add19bda
 };
 
-
-
-#xdg.portal = {
-#  enable = true;
-#  extraPortals = with pkgs; [
-#    xdg-desktop-portal-gtk
-#  ];
-#  config = {
-#    common = {
-#      default = [ "hyprland" "gtk" ];
-#    };
-#  };
-#};
 
   # Modern NixOS Font Configuration
   fonts.packages = with pkgs; [
