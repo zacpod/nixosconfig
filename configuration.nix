@@ -190,6 +190,9 @@
   fonts.packages = with pkgs; [
     nerd-fonts.fira-code # High quality mono font with icons
     nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    nerd-fonts.iosevka
   ];
 
   environment.sessionVariables = {

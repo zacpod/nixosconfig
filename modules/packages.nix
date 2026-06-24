@@ -150,5 +150,6 @@
     libnotify
     dnsutils
     nixpkgs-fmt
+    pandoc
   ];
 }
