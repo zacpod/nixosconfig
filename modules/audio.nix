@@ -1,28 +1,6 @@
 { config, pkgs, lib, ... }:
 
-let
-  wp_store_json = ''
-    {
-      "modules": [
-        {
-          "name": "store-factory",
-          "type": "factory",
-          "args": {
-            "path": "~/.local/share/wireplumber/state",
-            "save_interval": 5
-          }
-        },
-        {
-          "name": "session-factory",
-          "type": "factory",
-          "args": {
-            "restore": true
-          }
-        }
-      ]
-    }
-  '';
-in
+
 {
   services.pipewire = {
     enable = true;
@@ -30,9 +8,19 @@ in
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
-    wireplumber.enable = true;
+    wireplumber = {
+      enable = true;
+
+      extraConfig = {
+        "10-restore" = {
+          "wireplumber.settings" = {
+            "restore-state" = true;
+          };
+        };
+      };
+    };
   };
 
-  environment.etc."wireplumber/wireplumber.conf.d/50-store.conf".text = wp_store_json;
 
 }
+

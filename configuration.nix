@@ -68,6 +68,7 @@
 
   services.flatpak.enable = true;
   services.displayManager.plasma-login-manager.enable = true;
+  services.displayManager.plasma-login-manager.settings.Users.RememberLastSession = true;
   services.desktopManager.plasma6.enable = true;
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -109,30 +110,10 @@
 
 
 
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-
-    wireplumber = {
-      enable = true;
-
-      extraConfig = {
-        "10-restore" = {
-          "wireplumber.settings" = {
-            "restore-state" = true;
-          };
-        };
-      };
-    };
-  };
 
 
-  boot.kernel.sysctl = {
-    "kernel.yama.ptrace_scope" = 0;
-  };
+
+
   boot.kernelPackages = inputs.nix-cachyos-kernel.legacyPackages.${pkgs.system}.linuxPackages-cachyos-latest;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -157,12 +138,10 @@
     substituters = [
       "https://cache.nixos.org"
       "https://hyprland.cachix.org"
-      "https://cachyos-kernel.cachix.org"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      "cachyos-kernel.cachix.org-1:Qm3d6Y0V8q7yqQ0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0p8Y0="
     ];
 
 
@@ -176,13 +155,13 @@
   xdg.portal = {
     enable = true;
     config.hyprland = {
-      default = [ "hyprland" ];
-      "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
-      "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
-#      extraPortals = [
-#        pkgs.xdg-desktop-portal-kde
-#        pkgs.xdg-desktop-portal-hyprland
-#      ];
+      default = [ "hyprland" "kde" "gtk" ];
+     "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
+     "org.freedesktop.impl.portal.RemoteDesktop" = [ "hyprland" ]; # Crucial for Deskflow
+     extraPortals = [
+        pkgs.xdg-desktop-portal-hyprland
+        pkgs.xdg-desktop-portal-gtk  # only if you actually need GTK portal
+        ];
     };
   };
 
@@ -191,7 +170,6 @@
     nerd-fonts.fira-code # High quality mono font with icons
     nerd-fonts.symbols-only # Highly recommended fallback for custom status bar icons
     nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
     nerd-fonts.iosevka
   ];
 
@@ -231,8 +209,8 @@
   boot.kernel.sysctl = {
     "vm.max_map_count" = 16777216; # Massive buffer required for Star Citizen entities
     "fs.file-max" = 524288;
+    "kernel.yama.ptrace_scope" = 0;
   };
-
 
 
 

@@ -29,7 +29,6 @@
       specialArgs = { inherit inputs; };
 
       modules = [
-        ./hardware-configuration.nix
         ./configuration.nix
         nix-citizen.nixosModules.default
         ./noctalia.nix

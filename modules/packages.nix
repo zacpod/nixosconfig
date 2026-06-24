@@ -8,6 +8,8 @@
       enable = true;
       withUWSM = true;
       xwayland.enable = true;
+      package = pkgs.hyprland;  # overlay handles the patched version
+      portalPackage = pkgs.xdg-desktop-portal-hyprland;  # same
     };
     kdeconnect.enable = true;
     steam = {
@@ -84,7 +86,6 @@
     signal-desktop
     discord
     blueman # A lightweight graphical Bluetooth manager and system tray app
-    bluez
     cabextract # Required for unpacking underlying launcher scripts safely
     mangohud
     git
@@ -114,7 +115,6 @@
     cifs-utils
     samba
     # Secure password wallet framework for KDE apps
-    kdePackages.kwallet-pam # Auto-unlocks wallet with your Linux login
     kdePackages.plasma-integration # Bridges KDE apps to non-KDE window managers
     microsoft-edge # Microsoft Edge browser (Stable)
     libreoffice-fresh # The modern, fully maintained successor to OpenOffice
@@ -136,12 +136,10 @@
     gnupg
     pinentry-qt
     xdg-desktop-portal
-    xdg-desktop-portal-gtk
+    # xdg-desktop-portal-gtk
     jq #json query utility
-    kdePackages.dolphin
     kdePackages.kio
     kdePackages.kio-fuse
-    kdePackages.kio-extras
     kdePackages.qtsvg
     fastfetch
     libva
