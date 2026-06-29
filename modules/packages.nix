@@ -62,6 +62,9 @@
 
 
   environment.systemPackages = with pkgs; [
+    (inputs.nix-citizen.packages.${pkgs.system}.star-citizen.override {
+      preCommands = "export MANGOHUD=1";
+    })
     vim
     wget
     nano
@@ -149,5 +152,18 @@
     dnsutils
     nixpkgs-fmt
     pandoc
+    kdePackages.kdenlive
+    ffmpeg
+    ethtool
+    mpv
+    yt-dlp  # View streams without browser
+    (ungoogled-chromium.override {   #
+    commandLineArgs = [
+      "--disable-background-timer-throttling"
+      "--disable-renderer-backgrounding"
+      "--disable-backgrounding-occluded-windows"
+      ];
+    })
+    prismlauncher # minecraft client
   ];
 }

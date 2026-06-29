@@ -18,6 +18,24 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.plymouth = {
+    enable = true;
+    # The folder inside the package is just called "catppuccin"
+    theme = "catppuccin-mocha";
+
+    # Override the package so it builds the "mocha" variant asset files
+    themePackages = [
+      (pkgs.catppuccin-plymouth.override { variant = "mocha"; })
+    ];
+  };
+  # Make sure the quiet splash kernel params are set
+  boot.kernelParams = [ "quiet" "splash" ];
+
+  # Suppress the systemd-boot menu unless you hold a key
+  boot.loader.systemd-boot.editor = false;
+  boot.consoleLogLevel = 0;
+  boot.initrd.verbose = false;
+
 
   # Set your time zone.
   time.timeZone = "America/Toronto";
@@ -66,9 +84,25 @@
     enable32Bit = true;
   };
 
+  services.displayManager.plasma-login-manager = {
+    enable = true;
+#    theme = "sddm-astronaut-theme";
+    settings = {
+      Users = {
+        RememberLastSession = true;
+      };
+      Theme = {
+        # Reference the wallpaper — if it's in your config repo you can use a Nix path:
+        Background = "/home/zac/Pictures/wallpapers/Lofi-Cafe2.png";
+        # Or if you want to store it as a Nix-managed path:
+        # Background = "${./wallpapers/Lofi-Cafe2.png}";
+      };
+    };
+  };
+
+
+
   services.flatpak.enable = true;
-  services.displayManager.plasma-login-manager.enable = true;
-  services.displayManager.plasma-login-manager.settings.Users.RememberLastSession = true;
   services.desktopManager.plasma6.enable = true;
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
