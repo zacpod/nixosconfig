@@ -109,6 +109,13 @@
     MOZ_ENABLE_WAYLAND = "1";
   };
 
+  services.rpcbind.enable = true;
+  fileSystems."/shared" = {
+    device = "10.0.0.9:/shared";
+    fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" "x-systemd.mount-timeout=10" "soft" ];
+  };
+
   qt = {
     enable = true;
     platformTheme = "kde";

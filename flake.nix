@@ -17,13 +17,23 @@
     nix-citizen.url = "github:LovingMelody/nix-citizen";
 
 
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-doom-emacs-unstraightened = {
+      url = "github:marienz/nix-doom-emacs-unstraightened";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Patched Hyprland + patched XDPH
     hyprland-patched.url = "github:3l0w/Hyprland/feat/input-capture-impl";
     xdph-patched.url = "github:3l0w/xdg-desktop-portal-hyprland/feat/input-capture-impl";
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
-  outputs = { self, nixpkgs, zen-browser, nix-citizen, hyprland-patched, xdph-patched, nix-cachyos-kernel, ... } @ inputs: {
+  outputs = { self, nixpkgs, zen-browser, nix-citizen, hyprland-patched, xdph-patched, nix-cachyos-kernel, home-manager, ... } @ inputs: {
     nixosConfigurations.Goliath = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -32,6 +42,8 @@
         ./configuration.nix
         nix-citizen.nixosModules.default
         ./noctalia.nix
+        home-manager.nixosModules.home-manager
+        ./home.nix
         ({ pkgs, ... }: {
           nixpkgs.overlays = [
             # 1. Full Hyprland ecosystem override
